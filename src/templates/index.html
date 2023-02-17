@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ТЗ Flask</title>
+  </head>
+  <body>
+    <h1>Транслит текста</h1>
+    <input type="text" id="inputText" />
+    <button onclick="translateText()">Перевести</button>
+    <div id="output"></div>
+    <button onclick="downloadFile()">XLS</button>
+    <button onclick="makeReport()">Отчет</button>
+
+    <script>
+      function downloadFile() {
+        fetch('/api/download_xls')
+          .then(response => response.blob())
+          .then(blob => {
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'file.xlsx');
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+            window.URL.revokeObjectURL(url);
+          });
+      }
+
+      function translateText() {
+        const inputText = document.getElementById("inputText").value;
+
+        fetch('api/translate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ text: inputText })
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = data.text;
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+
+      function makeReport() {
+        
+      }
+    </script>
+  </body>
+</html>
