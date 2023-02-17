@@ -1,55 +1,83 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>ТЗ Flask</title>
-  </head>
-  <body>
-    <h1>Транслит текста</h1>
-    <input type="text" id="inputText" />
-    <button onclick="translateText()">Перевести</button>
-    <div id="output"></div>
-    <button onclick="downloadFile()">XLS</button>
-    <button onclick="makeReport()">Отчет</button>
 
-    <script>
-      function downloadFile() {
-        fetch('/api/download_xls')
-          .then(response => response.blob())
-          .then(blob => {
-            const url = window.URL.createObjectURL(new Blob([blob]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'file.xlsx');
-            document.body.appendChild(link);
-            link.click();
-            link.parentNode.removeChild(link);
-            window.URL.revokeObjectURL(url);
-          });
-      }
+<head>
+  <title>ТЗ Flask</title>
+</head>
 
-      function translateText() {
-        const inputText = document.getElementById("inputText").value;
+<body>
+  <h1>Транслит текста</h1>
+  <input type="text" id="inputText" />
+  <button onclick="translateText()">Перевести</button>
+  <div id="output"></div>
+  <button onclick="downloadFile()">XLS</button>
+  <button onclick="getReport()">Отчет</button>
+  <div id="report-div"></div>
 
-        fetch('api/translate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ text: inputText })
+  <script>
+    function downloadFile() {
+      fetch('/api/download_xls')
+        .then(response => response.blob())
+        .then(blob => {
+          const url = window.URL.createObjectURL(new Blob([blob]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'file.xlsx');
+          document.body.appendChild(link);
+          link.click();
+          link.parentNode.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        });
+    }
+
+    function translateText() {
+      const inputText = document.getElementById("inputText").value;
+
+      fetch('api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: inputText })
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          const outputDiv = document.getElementById('output');
+          outputDiv.innerHTML = data.text;
         })
-          .then((response) => response.json())
-          .then((data) => {
-            const outputDiv = document.getElementById('output');
-            outputDiv.innerHTML = data.text;
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      }
+        .catch((error) => {
+          console.error(error);
+        });
+    }
 
-      function makeReport() {
-        
+    let reportGenerated = false;
+
+    function getReport() {
+
+      if (reportGenerated) {
+        return;
       }
-    </script>
-  </body>
+      const reportDiv = document.getElementById('report-div');
+
+      fetch('/api/report')
+        .then(response => response.json())
+        .then(data => {
+          const rows = data.slice(-10);
+          const reportList = document.createElement('ul');
+          rows.forEach(row => {
+            const reportItem = document.createElement('li');
+            reportItem.textContent = row.toString();
+            reportList.appendChild(reportItem);
+          });
+          reportDiv.appendChild(reportList);
+          reportGenerated = true;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  </script>
+
+</body>
+
 </html>

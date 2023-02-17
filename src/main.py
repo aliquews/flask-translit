@@ -1,12 +1,14 @@
 from flask import Flask, send_file, render_template, request
 from transliterate import translit
 
-from src.logic import export_data
+from src.logic import export_data, get_data
 from src.db.db_operations import create
+from src.db.models import Translit
 
 
 app = Flask(__name__, template_folder="templates")
 
+test_db = [i for i in range(15)]
 
 @app.get("/")
 def index():
@@ -36,4 +38,9 @@ def download_xls():
 
 @app.get("/api/report")
 def report():
-    pass
+    
+    result = [Translit.from_orm(t.Translation) for t in get_data.get_latest()]
+
+    return [f'{t.text} -> {t.text_translit}' for t in result]
+
+    
