@@ -51,19 +51,21 @@
     }
 
     let reportGenerated = false;
+    let reportList;
 
     function getReport() {
 
-      if (reportGenerated) {
-        return;
-      }
       const reportDiv = document.getElementById('report-div');
+
+      if (reportGenerated) {
+        reportDiv.removeChild(reportList);
+      }
 
       fetch('/api/report')
         .then(response => response.json())
         .then(data => {
           const rows = data.slice(-10);
-          const reportList = document.createElement('ul');
+          reportList = document.createElement('ul');
           rows.forEach(row => {
             const reportItem = document.createElement('li');
             reportItem.textContent = row.toString();
