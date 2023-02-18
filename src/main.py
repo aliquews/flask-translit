@@ -1,6 +1,11 @@
+import os
+import sys
+import subprocess
+
 from flask import Flask, send_file, render_template, request
 from transliterate import translit
 
+sys.path = ['','..'] + sys.path[1:]
 from src.logic import export_data, get_data
 from src.db.db_operations import create
 from src.db.models import Translit
@@ -43,4 +48,9 @@ def report():
 
     return [f'{t.text} -> {t.text_translit}' for t in result]
 
-    
+
+
+if __name__ == "__main__":
+    subprocess.run(["alembic", "upgrade", "head"])
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)

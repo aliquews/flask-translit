@@ -10,3 +10,10 @@
 
 [![Screenshot-from-2023-02-18-17-20-03.png](https://i.postimg.cc/kG684VB9/Screenshot-from-2023-02-18-17-20-03.png)](https://postimg.cc/jnTC3SHk)
 
+## Установка
+### Клонирование репозитория
+`git clone https://github.com/aliquews/flask-translit.git`
+### Запуск через docker compose
+`docker-compose up --build -d`
+
+#### На этом установка завершена, можно использовать сервис.
