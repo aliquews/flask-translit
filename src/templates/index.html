@@ -50,6 +50,7 @@
         .then((response) => response.json())
         .then((data) => {
           const outputDiv = document.getElementById('output');
+          outputDiv.style.color = "black";
           outputDiv.innerHTML = data.text;
         })
         .catch((error) => {
