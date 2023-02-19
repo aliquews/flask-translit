@@ -33,6 +33,13 @@
     function translateText() {
       const inputText = document.getElementById("inputText").value;
 
+      if (inputText === "") {
+        const outputDiv = document.getElementById('output');
+        outputDiv.style.color = "red";
+        outputDiv.innerHTML = "Переводимая строка не может быть пустой.";
+        return;
+      }
+
       fetch('api/translate', {
         method: 'POST',
         headers: {
